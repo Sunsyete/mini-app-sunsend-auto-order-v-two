@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mellstecuu Dashboard</title>
+    
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        bgDark: '#09090b',
+                        surface: '#18181b',
+                        surfaceHover: '#27272a',
+                        primary: '#8b5cf6',
+                        secondary: '#d946ef',
+                        accent: '#0ea5e9'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #09090b;
+            color: #fafafa;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            overflow-x: hidden;
+        }
+        
+        /* Glassmorphism & UI Effects */
+        .glass-panel {
+            background: rgba(24, 24, 27, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-nav {
+            background: rgba(9, 9, 11, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gradient-card {
+            background: linear-gradient(145deg, #7c3aed, #c026d3);
+            box-shadow: 0 10px 30px -10px rgba(192, 38, 211, 0.5);
+        }
+        
+        /* Hide scrollbar */
+        ::-webkit-scrollbar { display: none; }
+        
+        /* Animations */
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transform: translateY(15px) scale(0.98);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        
+        .pulse-dot {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+
+        /* Loading Overlay */
+        #loader {
+            transition: opacity 0.5s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-24 relative font-sans antialiased selection:bg-primary/30">
+
+    <!-- Loading Screen -->
+    <div id="loader" class="fixed inset-0 bg-bgDark z-[100] flex flex-col items-center justify-center">
+        <div class="w-16 h-16 border-4 border-surface border-t-primary rounded-full animate-spin mb-4"></div>
+        <p class="text-gray-400 font-medium animate-pulse text-sm">Menghubungkan ke Bot...</p>
+    </div>
+
+    <!-- Background Glow Effects -->
+    <div class="fixed top-[-10%] left-[-10%] w-64 h-64 bg-primary/20 rounded-full blur-[100px] pointer-events-none"></div>
+    <div class="fixed bottom-10 right-[-10%] w-64 h-64 bg-secondary/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+    <!-- Main App Container -->
+    <div class="max-w-md mx-auto w-full p-5 relative z-10">
+
+        <!-- TAB: HOME -->
+        <div id="tab-home" class="tab-content active space-y-6">
+            
+            <!-- Header -->
+            <div class="flex items-center justify-between mt-2">
+                <div>
+                    <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Selamat Datang</p>
+                    <h1 class="text-2xl font-extrabold text-white truncate w-48" id="user-name">Pengguna</h1>
+                </div>
+                <div class="w-12 h-12 rounded-full gradient-card flex items-center justify-center text-lg font-bold border border-white/20" id="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+
+            <!-- Balance Card -->
+            <div class="gradient-card rounded-[1.5rem] p-6 relative overflow-hidden">
+                <!-- Card Accents -->
+                <div class="absolute top-0 right-0 -mr-4 -mt-4 w-32 h-32 rounded-full bg-white/10 blur-2xl"></div>
+                <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/20 to-transparent"></div>
+                
+                <div class="relative z-10 flex justify-between items-start">
+                    <div>
+                        <p class="text-white/80 text-sm font-medium mb-1">Total Saldo Aktif</p>
+                        <h2 class="text-4xl font-extrabold text-white tracking-tight" id="user-balance">Rp0</h2>
+                    </div>
+                    <div class="bg-white/20 backdrop-blur-md p-2 rounded-xl border border-white/20">
+                        <i class="fas fa-wallet text-white text-xl"></i>
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex items-center gap-2 relative z-10">
+                    <span class="flex h-2.5 w-2.5 relative">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                    </span>
+                    <p class="text-xs text-white/90 font-medium">Terhubung dengan database bot</p>
+                </div>
+            </div>
+
+            <!-- Quick Info / Status -->
+            <div>
+                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3 px-1">Informasi Sistem</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="glass-panel p-4 rounded-2xl flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center text-accent shrink-0">
+                            <i class="fas fa-robot text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-gray-400 font-semibold uppercase">Status Bot</p>
+                            <p class="text-sm font-bold text-white mt-0.5 flex items-center gap-1" id="bot-status">
+                                ONLINE
+                            </p>
+                        </div>
+                    </div>
+                    <div class="glass-panel p-4 rounded-2xl flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary shrink-0">
+                            <i class="fas fa-bolt text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-gray-400 font-semibold uppercase">Sistem</p>
+                            <p class="text-sm font-bold text-white mt-0.5">Otomatis 24/7</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Banner Order info -->
+            <div class="glass-panel rounded-2xl p-4 flex items-center justify-between border-l-4 border-l-primary mt-2">
+                <div>
+                    <h4 class="font-bold text-sm text-white">Cara Order Produk</h4>
+                    <p class="text-xs text-gray-400 mt-1">Lakukan pemesanan langsung melalui chat bot.</p>
+                </div>
+                <button onclick="tg.close()" class="w-8 h-8 rounded-full bg-surfaceHover flex items-center justify-center text-gray-400 hover:text-white transition">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- TAB: CATALOG -->
+        <div id="tab-catalog" class="tab-content space-y-4">
+            <div class="pt-2 pb-2 sticky top-0 bg-bgDark/90 backdrop-blur-md z-20">
+                <h2 class="text-2xl font-extrabold text-white">Katalog Produk</h2>
+                <p class="text-sm text-gray-400 mt-1">Daftar layanan digital tersedia saat ini.</p>
+                
+                <div class="mt-4 relative">
+                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+                    <input type="text" id="searchInput" placeholder="Cari layanan atau produk..." class="w-full bg-surface border border-gray-800 text-white rounded-2xl py-3.5 pl-12 pr-4 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition shadow-inner placeholder-gray-600 text-sm font-medium" oninput="filterProducts()">
+                </div>
+            </div>
+
+            <div id="products-container" class="grid grid-cols-1 gap-4 pb-4">
+                <!-- Data akan di-inject via JavaScript -->
+            </div>
+        </div>
+
+        <!-- TAB: PROFILE -->
+        <div id="tab-profile" class="tab-content space-y-6">
+            <div class="pt-6 text-center relative">
+                <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-full h-32 bg-gradient-to-b from-primary/10 to-transparent blur-xl pointer-events-none"></div>
+                
+                <div class="w-28 h-28 mx-auto rounded-[2rem] gradient-card p-1 shadow-2xl shadow-primary/20 mb-5 relative z-10 transform rotate-3 hover:rotate-0 transition duration-300">
+                    <div class="w-full h-full bg-surface rounded-[1.8rem] flex items-center justify-center text-4xl font-extrabold text-white" id="profile-avatar">
+                        <i class="fas fa-user-astronaut gradient-text"></i>
+                    </div>
+                </div>
+                
+                <h2 class="text-2xl font-extrabold text-white relative z-10" id="profile-name">Pengguna</h2>
+                <div class="inline-flex items-center gap-2 bg-surfaceHover px-3 py-1.5 rounded-full mt-3 border border-white/5 relative z-10">
+                    <i class="fas fa-id-badge text-primary text-xs"></i>
+                    <span class="text-gray-300 font-mono text-xs font-semibold" id="profile-id">ID: Sedang memuat...</span>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-3xl overflow-hidden mt-2">
+                <div class="p-5 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
+                    <div class="flex items-center gap-3 text-gray-300">
+                        <div class="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center text-green-400">
+                            <i class="fas fa-wallet text-sm"></i>
+                        </div>
+                        <span class="font-medium text-sm">Saldo Saat Ini</span>
+                    </div>
+                    <span class="font-bold text-white text-lg" id="profile-balance">Rp0</span>
+                </div>
+                <div class="p-5 border-b border-white/5 flex justify-between items-center">
+                    <div class="flex items-center gap-3 text-gray-300">
+                        <div class="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400">
+                            <i class="fas fa-server text-sm"></i>
+                        </div>
+                        <span class="font-medium text-sm">Gateway Bot</span>
+                    </div>
+                    <span class="font-bold text-gray-200 text-sm" id="profile-gateway">-</span>
+                </div>
+                <div class="p-5 flex justify-between items-center">
+                    <div class="flex items-center gap-3 text-gray-300">
+                        <div class="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-400">
+                            <i class="fas fa-info-circle text-sm"></i>
+                        </div>
+                        <span class="font-medium text-sm">Mode Bot</span>
+                    </div>
+                    <span class="font-bold text-green-400 text-xs bg-green-400/10 px-2.5 py-1 rounded-md" id="profile-maintenance">AKTIF</span>
+                </div>
+            </div>
+
+            <button onclick="tg.close()" class="w-full glass-panel hover:bg-surfaceHover border border-white/5 rounded-2xl py-4 font-bold text-gray-300 transition flex items-center justify-center gap-2 group mt-4">
+                <i class="fas fa-times-circle text-gray-500 group-hover:text-red-400 transition"></i> 
+                <span>Tutup Dashboard</span>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="fixed bottom-0 left-0 w-full glass-nav z-50 pb-safe">
+        <div class="max-w-md mx-auto flex justify-around items-center px-2 py-2">
+            <button onclick="switchTab('home')" class="nav-btn active relative flex flex-col items-center justify-center w-16 h-14 rounded-2xl text-gray-500 transition-all duration-300" data-target="home">
+                <div class="nav-indicator absolute top-0 left-1/2 -translate-x-1/2 w-8 h-1 bg-primary rounded-b-md opacity-100 transition-opacity"></div>
+                <i class="fas fa-home text-[20px] mb-1 z-10 transition-transform duration-300"></i>
+                <span class="text-[10px] font-bold z-10">Beranda</span>
+            </button>
+            
+            <button onclick="switchTab('catalog')" class="nav-btn relative flex flex-col items-center justify-center w-16 h-14 rounded-2xl text-gray-500 transition-all duration-300" data-target="catalog">
+                <div class="nav-indicator absolute top-0 left-1/2 -translate-x-1/2 w-8 h-1 bg-primary rounded-b-md opacity-0 transition-opacity"></div>
+                <i class="fas fa-box-open text-[20px] mb-1 z-10 transition-transform duration-300"></i>
+                <span class="text-[10px] font-bold z-10">Katalog</span>
+            </button>
+            
+            <button onclick="switchTab('profile')" class="nav-btn relative flex flex-col items-center justify-center w-16 h-14 rounded-2xl text-gray-500 transition-all duration-300" data-target="profile">
+                <div class="nav-indicator absolute top-0 left-1/2 -translate-x-1/2 w-8 h-1 bg-primary rounded-b-md opacity-0 transition-opacity"></div>
+                <i class="fas fa-user text-[20px] mb-1 z-10 transition-transform duration-300"></i>
+                <span class="text-[10px] font-bold z-10">Profil</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Inisialisasi Telegram Web App
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.setHeaderColor('#09090b');
+        tg.setBackgroundColor('#09090b');
+
+        // GANTI URL INI DENGAN URL API BOT ANDA NANTINYA
+        // Contoh: 'https://domain-bot-anda.com/api/miniapp'
+        const BOT_API_URL = '/api/miniapp'; 
+
+        // Global State
+        let allProducts = [];
+        let telegramUserId = null;
+        let userData = {
+            id: 'Tamu',
+            first_name: 'Pengguna',
+            balance: 0
+        };
+        let botSettings = { maintenance: false, active_gateway: 'mustikapay' };
+
+        // Dapatkan data user dari Telegram
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            telegramUserId = tg.initDataUnsafe.user.id;
+            userData.id = tg.initDataUnsafe.user.id;
+            userData.first_name = tg.initDataUnsafe.user.first_name;
+        }
+
+        const formatRupiah = (angka) => 'Rp' + Number(angka).toLocaleString('id-ID');
+
+        async function fetchBotData() {
+            try {
+                // Mencoba request ke server Bot Anda dengan membawa user_id
+                const response = await fetch(`${BOT_API_URL}?user_id=${telegramUserId || 123456789}`);
+                
+                if (!response.ok) throw new Error("Gagal terhubung ke server Bot");
+                
+                const data = await response.json();
+                
+                // Update State dengan data dari Bot
+                allProducts = data.products || [];
+                userData.balance = data.user_balance || 0;
+                botSettings = data.settings || botSettings;
+                
+            } catch (error) {
+                console.log('API Bot belum tersedia/CORS issue, menggunakan data dummy untuk preview UI.');
+                // DATA DUMMY (Fallback jika API bot mati/belum disetup)
+                allProducts = [
+                    { id: 1, name: "Spotify Premium 1 Bulan", price: 15000, desc: "Legal, Full Garansi 30 Hari. Akun dibuatkan oleh admin.", stock: 50 },
+                    { id: 2, name: "Panel Pterodactyl 4GB RAM", price: 10000, desc: "Server Singapore, Uptime 99%. Cocok untuk bot Node.js", stock: 12 },
+                    { id: 3, name: "Script Bot Auto Order", price: 75000, desc: "Source code lengkap dengan sistem database JSON.", stock: 999 },
+                    { id: 4, name: "Netflix Anti Hold 1 Bulan", price: 35000, desc: "Sharing account 1 profile. Dilarang ganti password.", stock: 0 }
+                ];
+                userData.balance = 150000;
+            } finally {
+                // Update UI
+                renderUI();
+                
+                // Sembunyikan loader
+                setTimeout(() => {
+                    document.getElementById('loader').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
+                }, 800);
+            }
+        }
+
+        function renderUI() {
+            // Render Info User
+            const initial = userData.first_name.charAt(0).toUpperCase();
+            document.getElementById('user-name').innerText = userData.first_name;
+            document.getElementById('profile-name').innerText = userData.first_name;
+            
+            // Ganti inisial profil
+            document.getElementById('user-avatar').innerHTML = initial;
+            document.getElementById('profile-avatar').innerHTML = initial;
+            
+            document.getElementById('profile-id').innerText = `ID: ${userData.id}`;
+            document.getElementById('user-balance').innerText = formatRupiah(userData.balance);
+            document.getElementById('profile-balance').innerText = formatRupiah(userData.balance);
+            
+            // Render Info Bot
+            document.getElementById('profile-gateway').innerText = botSettings.active_gateway.toUpperCase();
+            
+            const statusEl = document.getElementById('bot-status');
+            const maintEl = document.getElementById('profile-maintenance');
+            
+            if (botSettings.maintenance) {
+                statusEl.innerHTML = '<span class="text-red-400">MAINTENANCE</span>';
+                maintEl.innerText = 'MAINTENANCE';
+                maintEl.className = 'font-bold text-red-400 text-xs bg-red-400/10 px-2.5 py-1 rounded-md';
+            }
+
+            renderProducts(allProducts);
+        }
+
+        function renderProducts(products) {
+            const container = document.getElementById('products-container');
+            container.innerHTML = '';
+
+            if (products.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 glass-panel rounded-2xl border border-white/5">
+                        <i class="fas fa-box-open text-5xl text-gray-600 mb-4 block"></i>
+                        <h3 class="text-lg font-bold text-white mb-1">Katalog Kosong</h3>
+                        <p class="text-sm text-gray-500">Belum ada produk yang ditambahkan.</p>
+                    </div>`;
+                return;
+            }
+
+            products.forEach(p => {
+                const isOutOfStock = p.stock <= 0;
+                const card = document.createElement('div');
+                card.className = `glass-panel p-5 rounded-2xl flex flex-col relative overflow-hidden transition-all duration-300 ${isOutOfStock ? 'opacity-60 grayscale-[30%]' : 'hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5'}`;
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="pr-3">
+                            <h3 class="font-extrabold text-lg text-white leading-snug mb-1">${p.name}</h3>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded border ${isOutOfStock ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-primary/10 text-primary border-primary/20'} uppercase tracking-wider">
+                                    Stok: ${p.stock}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-5 leading-relaxed line-clamp-2">${p.desc || 'Tidak ada deskripsi.'}</p>
+                    
+                    <div class="mt-auto flex items-center justify-between border-t border-white/5 pt-4">
+                        <span class="font-extrabold text-white text-xl">${formatRupiah(p.price)}</span>
+                        <div class="text-xs font-bold text-gray-500 bg-surface px-3 py-1.5 rounded-lg border border-white/5">
+                            <i class="fas fa-robot mr-1"></i> Order di Bot
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Fitur Pencarian
+        function filterProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allProducts.filter(p => p.name.toLowerCase().includes(query) || (p.desc && p.desc.toLowerCase().includes(query)));
+            renderProducts(filtered);
+        }
+
+        function switchTab(tabId) {
+            // Reset tab contents
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Reset nav buttons
+            document.querySelectorAll('.nav-btn').forEach(el => {
+                el.classList.remove('active', 'text-white');
+                el.classList.add('text-gray-500');
+                el.querySelector('.nav-indicator').classList.remove('opacity-100');
+                el.querySelector('.nav-indicator').classList.add('opacity-0');
+                el.querySelector('i').classList.remove('text-primary', '-translate-y-1');
+            });
+            
+            // Activate selected tab content
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            
+            // Activate selected nav button styling
+            const btn = document.querySelector(`.nav-btn[data-target="${tabId}"]`);
+            if(btn) {
+                btn.classList.remove('text-gray-500');
+                btn.classList.add('active', 'text-white');
+                btn.querySelector('.nav-indicator').classList.remove('opacity-0');
+                btn.querySelector('.nav-indicator').classList.add('opacity-100');
+                btn.querySelector('i').classList.add('text-primary', '-translate-y-1');
+            }
+
+            // Haptic feedback (getaran ringan)
+            if(tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+        }
+
+        // Jalankan Fetch Data saat dibuka
+        window.onload = () => {
+            fetchBotData();
+        };
+
+    </script>
+</body>
+</html>
