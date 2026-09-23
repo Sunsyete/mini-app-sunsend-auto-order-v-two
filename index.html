@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SunShop Dashboard</title>
+    <title>Mellstecuu Digital ID</title>
     
-    <!-- Telegram Web App SDK (Wajib untuk integrasi data native) -->
+    <!-- Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- Tailwind CSS CDN -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- FontAwesome & Google Fonts -->
@@ -21,12 +21,27 @@
                 extend: {
                     fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
                     colors: {
-                        bgDark: '#09090b',
-                        surface: '#18181b',
-                        surfaceHover: '#27272a',
+                        bgDark: '#050505',
+                        surface: 'rgba(24, 24, 27, 0.4)',
+                        surfaceHover: 'rgba(39, 39, 42, 0.6)',
                         primary: '#8b5cf6',
                         secondary: '#d946ef',
                         accent: '#0ea5e9'
+                    },
+                    animation: {
+                        'float': 'floating 3s ease-in-out infinite',
+                        'spin-slow': 'spin 8s linear infinite',
+                        'pulse-glow': 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+                    },
+                    keyframes: {
+                        floating: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-5px)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: 1, filter: 'brightness(1)' },
+                            '50%': { opacity: .7, filter: 'brightness(1.5)' },
+                        }
                     }
                 }
             }
@@ -34,84 +49,89 @@
     </script>
     <style>
         body {
-            background-color: #09090b;
+            background-color: #050505;
             color: #fafafa;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
             overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(217, 70, 239, 0.15), transparent 25%);
         }
         
-        /* Glassmorphism Effects */
+        /* Premium Glassmorphism */
         .glass-panel {
-            background: rgba(24, 24, 27, 0.65);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: linear-gradient(145deg, rgba(30, 30, 35, 0.7), rgba(15, 15, 18, 0.9));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
         }
+        
+        /* Digital ID Card Style */
+        .id-card-bg {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(217, 70, 239, 0.05) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .id-card-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.03) 10%, transparent 20%);
+            background-size: 20px 20px;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
         .gradient-text {
-            background: linear-gradient(135deg, #a78bfa, #f472b6);
+            background: linear-gradient(135deg, #c4b5fd, #f9a8d4);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-        }
-        .gradient-card {
-            background: linear-gradient(145deg, #7c3aed, #c026d3);
-            box-shadow: 0 10px 30px -10px rgba(192, 38, 211, 0.5);
         }
         
         ::-webkit-scrollbar { display: none; }
         
-        /* Animations */
+        /* Modals & Animations */
         .fade-in-up {
             animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             opacity: 0;
             transform: translateY(20px);
         }
-        @keyframes fadeInUp {
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
 
-        /* Modal Styles */
-        .modal {
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-            opacity: 0;
-            visibility: hidden;
-        }
-        .modal.show {
-            opacity: 1;
-            visibility: visible;
-        }
-        .modal-content {
-            transform: scale(0.95);
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .modal.show .modal-content {
-            transform: scale(1);
-        }
+        .modal { transition: opacity 0.3s ease, visibility 0.3s ease; opacity: 0; visibility: hidden; }
+        .modal.show { opacity: 1; visibility: visible; }
+        .modal-content { transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .modal.show .modal-content { transform: scale(1); }
         
-        /* Copy Badge Animation */
-        .copy-success {
-            animation: popUp 0.3s ease forwards;
+        /* Toast Notification */
+        #toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px);
+            opacity: 0; visibility: hidden; transition: all 0.3s ease; z-index: 999;
         }
-        @keyframes popUp {
-            0% { transform: scale(0.8); opacity: 0; }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); opacity: 1; }
-        }
+        #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; visibility: visible; }
     </style>
 </head>
-<body class="min-h-screen relative font-sans antialiased selection:bg-primary/30 flex flex-col">
+<body class="min-h-screen relative font-sans antialiased selection:bg-primary/30 flex flex-col items-center">
 
-    <div class="fixed top-[-10%] left-[-10%] w-64 h-64 bg-primary/20 rounded-full blur-[100px] pointer-events-none"></div>
-    <div class="fixed bottom-10 right-[-10%] w-64 h-64 bg-secondary/10 rounded-full blur-[100px] pointer-events-none"></div>
+    <!-- Toast Notification -->
+    <div id="toast" class="glass-panel px-4 py-2 rounded-full flex items-center gap-2 border border-green-500/30 bg-green-500/10">
+        <i class="fas fa-check-circle text-green-400"></i>
+        <span class="text-sm font-semibold text-green-100">Disalin ke clipboard!</span>
+    </div>
 
-    <div id="modal-tutorial" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex flex-col items-center justify-center p-4">
-        <div class="modal-content glass-panel w-full max-w-sm rounded-3xl p-6 border border-white/10 relative">
-            <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-primary/30 rounded-full blur-2xl pointer-events-none"></div>
+    <!-- Modals (Tutorial & SnK) -->
+    <div id="modal-tutorial" class="modal fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex flex-col items-center justify-center p-4">
+        <div class="modal-content glass-panel w-full max-w-sm rounded-3xl p-6 border border-white/10 relative overflow-hidden">
+            <div class="absolute -top-12 -right-12 w-32 h-32 bg-primary/20 rounded-full blur-3xl pointer-events-none"></div>
             
             <div class="flex justify-between items-center mb-5 border-b border-white/5 pb-3 relative z-10">
                 <div class="flex items-center gap-2">
-                    <i class="fas fa-book-open text-primary"></i>
-                    <h3 class="text-lg font-extrabold text-white">Panduan Membeli</h3>
+                    <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                        <i class="fas fa-shopping-bag text-primary text-sm"></i>
+                    </div>
+                    <h3 class="text-lg font-extrabold text-white">Cara Pemesanan</h3>
                 </div>
                 <button onclick="closeModal('modal-tutorial')" class="w-8 h-8 bg-surfaceHover rounded-full flex items-center justify-center text-gray-400 hover:text-white transition">
                     <i class="fas fa-times"></i>
@@ -119,182 +139,224 @@
             </div>
             
             <div class="space-y-4 relative z-10">
-                <div class="flex gap-4 items-start">
-                    <div class="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center shrink-0 font-bold text-sm">1</div>
-                    <p class="text-sm text-gray-300 pt-1 leading-relaxed">Tutup halaman ini, kembali ke Chat Bot utama.</p>
+                <div class="flex gap-3 items-start p-3 rounded-xl bg-surface border border-white/5">
+                    <div class="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">1</div>
+                    <p class="text-xs text-gray-300 leading-relaxed">Tutup halaman ini, kembali ke Chat Bot utama.</p>
                 </div>
-                <div class="flex gap-4 items-start">
-                    <div class="w-8 h-8 rounded-full bg-accent/20 text-accent flex items-center justify-center shrink-0 font-bold text-sm">2</div>
-                    <p class="text-sm text-gray-300 pt-1 leading-relaxed">Klik tombol <b class="text-white">🛒 Lihat Produk</b> pada menu yang disediakan Bot.</p>
+                <div class="flex gap-3 items-start p-3 rounded-xl bg-surface border border-white/5">
+                    <div class="w-6 h-6 rounded-full bg-accent/20 text-accent flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">2</div>
+                    <p class="text-xs text-gray-300 leading-relaxed">Ketik <b class="text-white">/start</b> lalu klik tombol <b class="text-accent">🛒 Lihat Produk Tersedia</b>.</p>
                 </div>
-                <div class="flex gap-4 items-start">
-                    <div class="w-8 h-8 rounded-full bg-secondary/20 text-secondary flex items-center justify-center shrink-0 font-bold text-sm">3</div>
-                    <p class="text-sm text-gray-300 pt-1 leading-relaxed">Pilih layanan, lalu lakukan pembayaran via <b>QRIS</b> atau <b>Saldo</b>.</p>
-                </div>
-                <div class="flex gap-4 items-start">
-                    <div class="w-8 h-8 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center shrink-0 font-bold text-sm"><i class="fas fa-check"></i></div>
-                    <p class="text-sm text-gray-300 pt-1 leading-relaxed">Sistem akan memproses dan mengirimkan pesanan ke chat Anda.</p>
+                <div class="flex gap-3 items-start p-3 rounded-xl bg-surface border border-white/5">
+                    <div class="w-6 h-6 rounded-full bg-secondary/20 text-secondary flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">3</div>
+                    <p class="text-xs text-gray-300 leading-relaxed">Pilih layanan, bayar via <b>QRIS</b> atau <b>Saldo</b>, lalu pesanan otomatis dikirim.</p>
                 </div>
             </div>
-            <button onclick="closeModal('modal-tutorial')" class="w-full mt-6 bg-surfaceHover hover:bg-surface border border-white/10 text-white font-bold py-3.5 rounded-xl transition active:scale-95">Tutup Panduan</button>
+            <button onclick="closeModal('modal-tutorial')" class="w-full mt-6 bg-gradient-to-r from-primary to-secondary text-white font-bold py-3.5 rounded-xl transition active:scale-95 shadow-[0_0_20px_rgba(139,92,246,0.3)]">Tutup Panduan</button>
         </div>
     </div>
 
-    <div id="modal-snk" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex flex-col items-center justify-center p-4">
-        <div class="modal-content glass-panel w-full max-w-sm rounded-3xl p-6 border border-white/10">
-            <div class="flex justify-between items-center mb-5 border-b border-white/5 pb-3">
+    <div id="modal-snk" class="modal fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex flex-col items-center justify-center p-4">
+        <div class="modal-content glass-panel w-full max-w-sm rounded-3xl p-6 border border-white/10 relative overflow-hidden">
+            <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-secondary/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="flex justify-between items-center mb-5 border-b border-white/5 pb-3 relative z-10">
                 <div class="flex items-center gap-2">
-                    <i class="fas fa-shield-alt text-secondary"></i>
+                    <div class="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-secondary text-sm"></i>
+                    </div>
                     <h3 class="text-lg font-extrabold text-white">Syarat & Ketentuan</h3>
                 </div>
                 <button onclick="closeModal('modal-snk')" class="w-8 h-8 bg-surfaceHover rounded-full flex items-center justify-center text-gray-400 hover:text-white transition">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="text-sm text-gray-300 space-y-3 max-h-[50vh] overflow-y-auto pr-2">
-                <p>1. Transaksi yang sudah masuk sistem dan mendapatkan Invoice tidak dapat dibatalkan secara sepihak.</p>
-                <p>2. Pastikan menyimpan <b>ID Order</b> Anda sebagai bukti klaim garansi jika terjadi kendala pada layanan.</p>
-                <p>3. Barang yang dikirim bersifat digital (Akun, Akses, File). Tidak ada pengembalian dana (Refund) jika barang sudah dikirimkan oleh Bot.</p>
-                <p>4. Dilarang melakukan kecurangan pembayaran (bukti transfer palsu). Akun akan langsung diblokir permanen (Banned).</p>
+            <div class="text-xs text-gray-300 space-y-3 max-h-[50vh] overflow-y-auto pr-2 relative z-10">
+                <div class="p-3 bg-surface rounded-xl border border-white/5">
+                    <p class="font-semibold text-white mb-1"><i class="fas fa-exclamation-circle text-orange-400 mr-1"></i> Kebijakan Transaksi</p>
+                    <p>Transaksi yang sudah masuk dan mendapat Invoice tidak dapat dibatalkan sepihak.</p>
+                </div>
+                <div class="p-3 bg-surface rounded-xl border border-white/5">
+                    <p class="font-semibold text-white mb-1"><i class="fas fa-box-open text-blue-400 mr-1"></i> Pengiriman Digital</p>
+                    <p>Barang bersifat digital. Tidak ada pengembalian dana (Refund) jika produk terbukti valid dan sudah dikirim.</p>
+                </div>
+                <div class="p-3 bg-surface rounded-xl border border-white/5">
+                    <p class="font-semibold text-white mb-1"><i class="fas fa-user-shield text-green-400 mr-1"></i> Garansi & Klaim</p>
+                    <p>Simpan <b>ID Order</b> dan <b>UID Telegram</b> Anda sebagai bukti klaim garansi jika terjadi kendala.</p>
+                </div>
             </div>
-            <button onclick="closeModal('modal-snk')" class="w-full mt-6 bg-gradient-to-r from-primary to-secondary text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-primary/20 active:scale-95">Saya Setuju</button>
+            <button onclick="closeModal('modal-snk')" class="w-full mt-6 bg-surfaceHover border border-white/10 hover:border-white/20 text-white font-bold py-3.5 rounded-xl transition active:scale-95">Saya Mengerti</button>
         </div>
     </div>
 
-    <div class="max-w-md mx-auto w-full p-5 relative z-10 flex-grow flex flex-col">
+    <div class="max-w-md w-full p-5 relative z-10 flex-grow flex flex-col pt-8">
 
-        <!-- Header / Logo Area -->
-        <div class="text-center pt-4 pb-6 fade-in-up" style="animation-delay: 0.1s;">
-            <div class="w-16 h-16 mx-auto rounded-2xl gradient-card flex items-center justify-center shadow-lg shadow-primary/20 mb-3 transform rotate-3">
-                <i class="fas fa-store text-2xl text-white"></i>
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-8 fade-in-up" style="animation-delay: 0.1s;">
+            <div>
+                <h1 class="text-2xl font-extrabold text-white tracking-tight">Mellstecuu<span class="text-primary">.</span></h1>
+                <p class="text-[10px] font-medium text-gray-400 tracking-[0.2em] uppercase mt-1">Digital Auto-Store</p>
             </div>
-            <h1 class="text-xl font-extrabold text-white tracking-wide">SUNSHINE <span class="text-primary">STORE</span></h1>
-            <p class="text-xs text-gray-400 mt-1 font-medium tracking-widest uppercase">Digital Service Auto-Bot</p>
+            <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center bg-surface animate-pulse-glow">
+                <i class="fas fa-robot text-primary"></i>
+            </div>
         </div>
 
-        <div class="fade-in-up" style="animation-delay: 0.2s;">
-            <div class="glass-panel rounded-[2rem] p-1 relative overflow-hidden group">
-                <!-- Inner Card -->
-                <div class="bg-surface rounded-[1.8rem] p-6 relative z-10 h-full overflow-hidden">
+        <!-- Kartu Identitas Digital (Main Card) -->
+        <div class="fade-in-up animate-float" style="animation-delay: 0.2s;">
+            <div class="glass-panel id-card-bg rounded-[2rem] p-1 relative shadow-2xl shadow-primary/10">
+                <div class="bg-[#0a0a0c]/80 backdrop-blur-xl rounded-[1.8rem] p-6 relative z-10">
                     
-                    <!-- Decor -->
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
-                    
-                    <div class="flex items-center gap-4 mb-6 relative z-10">
-                        <div class="w-16 h-16 rounded-full gradient-card p-0.5">
-                            <div class="w-full h-full bg-surface rounded-full flex items-center justify-center text-2xl font-bold text-white uppercase overflow-hidden" id="user-initial">
-                                <i class="fas fa-user text-gray-400"></i>
+                    <!-- Top Section: Avatar & Badges -->
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="relative">
+                            <div class="w-20 h-20 rounded-2xl p-[2px] bg-gradient-to-br from-primary to-secondary">
+                                <div class="w-full h-full bg-bgDark rounded-[14px] flex items-center justify-center overflow-hidden relative" id="user-initial">
+                                    <i class="fas fa-user text-3xl text-gray-600"></i>
+                                </div>
                             </div>
+                            <!-- Online Indicator -->
+                            <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-4 border-[#0a0a0c] rounded-full"></div>
                         </div>
-                        <div class="flex-1 overflow-hidden">
-                            <div class="flex items-center gap-2">
-                                <h2 class="text-xl font-extrabold text-white truncate" id="user-name">Pengguna</h2>
-                                <!-- Premium Badge (Hidden by default) -->
-                                <i id="premium-badge" class="fas fa-star text-yellow-400 text-xs hidden" title="Telegram Premium"></i>
+                        
+                        <!-- Telegram Platform/Device Badge -->
+                        <div class="flex flex-col items-end gap-2">
+                            <div id="tg-platform-badge" class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold text-gray-300 flex items-center gap-1.5 uppercase tracking-wider">
+                                <i class="fas fa-mobile-alt"></i> Device
                             </div>
-                            <p class="text-sm text-gray-400 truncate" id="user-username">@username</p>
+                            <!-- Language Badge -->
+                            <div id="tg-lang-badge" class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold text-gray-300 flex items-center gap-1.5 uppercase tracking-wider">
+                                <i class="fas fa-globe"></i> ID
+                            </div>
                         </div>
                     </div>
 
-                    <!-- ID Section (Clickable) -->
-                    <div class="mt-4 pt-4 border-t border-white/5 relative z-10">
-                        <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Telegram Identity (UID)</p>
-                        <div onclick="copyId()" class="bg-bgDark/50 hover:bg-bgDark border border-white/5 rounded-xl p-3 flex justify-between items-center cursor-pointer transition-colors active:scale-95">
-                            <div class="flex items-center gap-3">
-                                <i class="fas fa-fingerprint text-primary text-lg"></i>
-                                <span class="font-mono text-gray-200 font-semibold tracking-wider text-sm" id="user-id">0000000000</span>
+                    <!-- User Info Section -->
+                    <div class="mb-5">
+                        <div class="flex items-center gap-2 mb-1">
+                            <h2 class="text-2xl font-extrabold text-white truncate" id="user-name">Pengguna</h2>
+                            <i id="premium-badge" class="fas fa-star text-yellow-400 text-sm hidden drop-shadow-[0_0_5px_rgba(250,204,21,0.8)]" title="Telegram Premium"></i>
+                        </div>
+                        <p class="text-sm font-medium text-gray-400" id="user-username">@username</p>
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-5"></div>
+
+                    <!-- UID Copy Section -->
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">Telegram Identity (UID)</p>
+                        <div onclick="copyId()" class="bg-black/50 hover:bg-black/80 border border-white/10 rounded-2xl p-4 flex justify-between items-center cursor-pointer transition-all active:scale-[0.98] group relative overflow-hidden">
+                            <!-- Hover Effect -->
+                            <div class="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            
+                            <div class="flex items-center gap-4 relative z-10">
+                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                                    <i class="fas fa-fingerprint text-xl"></i>
+                                </div>
+                                <div>
+                                    <span class="font-mono text-gray-200 font-bold tracking-widest text-lg" id="user-id">0000000000</span>
+                                </div>
                             </div>
-                            <div id="copy-btn" class="w-8 h-8 rounded-lg bg-surfaceHover flex items-center justify-center text-gray-400">
-                                <i class="fas fa-copy text-sm"></i>
+                            <div id="copy-btn" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 group-hover:bg-primary/20 group-hover:text-primary transition-colors relative z-10">
+                                <i class="fas fa-copy"></i>
                             </div>
                         </div>
-                        <p class="text-[10px] text-gray-500 mt-2 text-center">Ketuk kolom UID untuk menyalin ID Telegram Anda. Diperlukan untuk komplain atau top-up manual.</p>
                     </div>
+                    
                 </div>
             </div>
         </div>
 
-        <div class="mt-6 fade-in-up" style="animation-delay: 0.3s;">
-            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 px-1">Pusat Bantuan & Aksi</h3>
+        <div class="mt-8 fade-in-up" style="animation-delay: 0.3s;">
+            <div class="flex items-center justify-between mb-4 px-2">
+                <h3 class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Pusat Bantuan Cepat</h3>
+                <span class="flex h-2 w-2 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+            </div>
+            
             <div class="grid grid-cols-2 gap-3">
-                
                 <!-- Action: Cara Order -->
-                <button onclick="openModal('modal-tutorial')" class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-surfaceHover transition active:scale-95 border border-white/5 group">
-                    <div class="w-10 h-10 rounded-full bg-accent/10 text-accent flex items-center justify-center group-hover:scale-110 transition">
-                        <i class="fas fa-shopping-cart"></i>
+                <button onclick="openModal('modal-tutorial')" class="glass-panel p-4 rounded-2xl flex flex-col items-start gap-3 hover:bg-surfaceHover transition active:scale-95 group">
+                    <div class="w-10 h-10 rounded-full bg-accent/10 border border-accent/20 text-accent flex items-center justify-center group-hover:bg-accent group-hover:text-white transition-colors">
+                        <i class="fas fa-book-open"></i>
                     </div>
-                    <span class="text-xs font-bold text-gray-300">Cara Beli</span>
+                    <div>
+                        <span class="block text-sm font-bold text-gray-200">Cara Order</span>
+                        <span class="block text-[10px] text-gray-500 mt-0.5">Panduan beli produk</span>
+                    </div>
                 </button>
 
                 <!-- Action: S&K -->
-                <button onclick="openModal('modal-snk')" class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-surfaceHover transition active:scale-95 border border-white/5 group">
-                    <div class="w-10 h-10 rounded-full bg-secondary/10 text-secondary flex items-center justify-center group-hover:scale-110 transition">
+                <button onclick="openModal('modal-snk')" class="glass-panel p-4 rounded-2xl flex flex-col items-start gap-3 hover:bg-surfaceHover transition active:scale-95 group">
+                    <div class="w-10 h-10 rounded-full bg-secondary/10 border border-secondary/20 text-secondary flex items-center justify-center group-hover:bg-secondary group-hover:text-white transition-colors">
                         <i class="fas fa-file-contract"></i>
                     </div>
-                    <span class="text-xs font-bold text-gray-300">Aturan S&K</span>
+                    <div>
+                        <span class="block text-sm font-bold text-gray-200">Aturan S&K</span>
+                        <span class="block text-[10px] text-gray-500 mt-0.5">Kebijakan toko</span>
+                    </div>
                 </button>
 
                 <!-- Action: Contact Admin (UBAH USERNAME ADMIN DI SINI) -->
-                <a href="https://t.me/sunsshop" target="_blank" class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-surfaceHover transition active:scale-95 border border-white/5 group">
-                    <div class="w-10 h-10 rounded-full bg-green-500/10 text-green-400 flex items-center justify-center group-hover:scale-110 transition">
+                <a href="https://t.me/username_admin_anda" target="_blank" class="glass-panel p-4 rounded-2xl flex flex-col items-start gap-3 hover:bg-surfaceHover transition active:scale-95 group">
+                    <div class="w-10 h-10 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 flex items-center justify-center group-hover:bg-green-500 group-hover:text-white transition-colors">
                         <i class="fas fa-headset"></i>
                     </div>
-                    <span class="text-xs font-bold text-gray-300">Hubungi CS</span>
+                    <div>
+                        <span class="block text-sm font-bold text-gray-200">Hubungi CS</span>
+                        <span class="block text-[10px] text-gray-500 mt-0.5">Bantuan Admin</span>
+                    </div>
                 </a>
 
-                <!-- Action: Info Sistem -->
-                <div class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center gap-2 border border-white/5">
-                    <div class="w-10 h-10 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center">
-                        <span class="flex h-3 w-3 relative">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
-                        </span>
+                <!-- Action: Channel Store -->
+                <a href="https://t.me/username_channel_anda" target="_blank" class="glass-panel p-4 rounded-2xl flex flex-col items-start gap-3 hover:bg-surfaceHover transition active:scale-95 group">
+                    <div class="w-10 h-10 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                        <i class="fas fa-bullhorn"></i>
                     </div>
-                    <span class="text-xs font-bold text-gray-300">Sistem Aktif</span>
-                </div>
-
+                    <div>
+                        <span class="block text-sm font-bold text-gray-200">Info Update</span>
+                        <span class="block text-[10px] text-gray-500 mt-0.5">Join Channel Info</span>
+                    </div>
+                </a>
             </div>
         </div>
 
-        <div class="mt-auto pt-8 pb-4 fade-in-up" style="animation-delay: 0.4s;">
-            <button onclick="closeWebApp()" class="w-full bg-surfaceHover hover:bg-surface border border-white/10 rounded-xl py-4 flex items-center justify-center gap-2 text-gray-400 hover:text-white transition group">
-                <i class="fas fa-sign-out-alt group-hover:-translate-x-1 transition"></i>
-                <span class="font-bold text-sm">Kembali ke Bot</span>
+        <div class="mt-auto pt-10 pb-6 fade-in-up" style="animation-delay: 0.4s;">
+            <button onclick="closeWebApp()" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl py-4 flex items-center justify-center gap-3 text-gray-400 hover:text-white transition group active:scale-95">
+                <i class="fas fa-arrow-left text-sm group-hover:-translate-x-1 transition-transform"></i>
+                <span class="font-bold text-sm tracking-wide">KEMBALI KE BOT</span>
             </button>
         </div>
 
     </div>
 
     <script>
-        // Inisialisasi Telegram Web App
+        // Inisialisasi Telegram Web App SDK
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Buat layar penuh
-        tg.setHeaderColor('#09090b'); // Samakan dengan warna bg
-        tg.setBackgroundColor('#09090b');
+        
+        // Setup Tampilan Dasar (Full screen & Tema Header)
+        tg.expand();
+        tg.setHeaderColor('#050505');
+        tg.setBackgroundColor('#050505');
 
         let currentUserId = "0000000000";
 
-        // Fungsi untuk mengambil data asli dari Telegram
+        // Fungsi Membaca Semua Data yang Tersedia dari SDK
         function setupUserData() {
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 const user = tg.initDataUnsafe.user;
                 
-                // Set ID
+                // 1. Set User ID
                 currentUserId = user.id.toString();
                 document.getElementById('user-id').innerText = currentUserId;
                 
-                // Set Nama
+                // 2. Set Full Name
                 const fullName = (user.first_name + " " + (user.last_name || "")).trim();
                 document.getElementById('user-name').innerText = fullName;
                 
-                // Set Foto Profil atau Inisial Avatar
-                if (user.photo_url) {
-                    document.getElementById('user-initial').innerHTML = `<img src="${user.photo_url}" class="w-full h-full object-cover rounded-full" alt="Profile">`;
-                } else {
-                    document.getElementById('user-initial').innerHTML = user.first_name.charAt(0).toUpperCase();
-                }
-                
-                // Set Username
+                // 3. Set Username
                 if (user.username) {
                     document.getElementById('user-username').innerText = "@" + user.username;
                 } else {
@@ -302,48 +364,92 @@
                     document.getElementById('user-username').classList.add('italic', 'text-gray-500');
                 }
 
-                // Cek Status Premium
+                // 4. Set Foto Profil Asli (Jika diizinkan) atau Inisial
+                if (user.photo_url) {
+                    // Jika ada foto, ganti isi div menjadi tag img
+                    document.getElementById('user-initial').innerHTML = `<img src="${user.photo_url}" class="w-full h-full object-cover" alt="Profile">`;
+                } else {
+                    // Jika tidak ada foto, tampilkan inisial nama
+                    document.getElementById('user-initial').innerHTML = `<span class="text-3xl font-bold text-white uppercase">${user.first_name.charAt(0)}</span>`;
+                }
+
+                // 5. Cek Status Telegram Premium
                 if (user.is_premium) {
                     document.getElementById('premium-badge').classList.remove('hidden');
                 }
+                
+                // 6. Deteksi Bahasa (Language Code)
+                const langBadge = document.getElementById('tg-lang-badge');
+                let langText = user.language_code ? user.language_code.toUpperCase() : 'EN';
+                if(langText === 'ID') {
+                    langBadge.innerHTML = '🇮🇩 INDO';
+                } else if(langText === 'EN') {
+                    langBadge.innerHTML = '🇬🇧 ENG';
+                } else {
+                    langBadge.innerHTML = `<i class="fas fa-globe"></i> ${langText}`;
+                }
+
             } else {
-                // Tampilan jika dibuka di luar Telegram (Browser PC)
-                document.getElementById('user-name').innerText = "Tamu (Buka di Telegram)";
+                // Tampilan jika dibuka di browser PC biasa (di luar Telegram)
+                document.getElementById('user-name').innerText = "Guest Mode";
+                document.getElementById('user-username').innerText = "Buka via Telegram App";
+            }
+
+            // 7. Deteksi Platform / OS (iOS, Android, Desktop)
+            if (tg.platform) {
+                const platformBadge = document.getElementById('tg-platform-badge');
+                let p = tg.platform.toLowerCase();
+                if (p === 'ios') {
+                    platformBadge.innerHTML = '<i class="fab fa-apple text-gray-200"></i> iOS';
+                } else if (p === 'android') {
+                    platformBadge.innerHTML = '<i class="fab fa-android text-green-400"></i> ANDROID';
+                } else if (p === 'tdesktop' || p === 'web') {
+                    platformBadge.innerHTML = '<i class="fas fa-desktop text-blue-400"></i> DESKTOP';
+                } else {
+                    platformBadge.innerHTML = `<i class="fas fa-mobile-alt"></i> ${p.toUpperCase()}`;
+                }
             }
         }
 
-        // Fungsi Menyalin ID
+        // Fungsi Copy ID dengan Haptic Feedback & Toast
         function copyId() {
             if(currentUserId === "0000000000") return;
             
-            // Logika Copy to Clipboard
+            // Haptic Feedback (Getaran ringan di HP)
+            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            
             navigator.clipboard.writeText(currentUserId).then(() => {
                 const copyBtn = document.getElementById('copy-btn');
+                const toast = document.getElementById('toast');
                 
-                // Ubah Ikon jadi Centang
-                copyBtn.innerHTML = '<i class="fas fa-check text-green-400 text-lg"></i>';
-                copyBtn.classList.add('copy-success');
-                copyBtn.classList.replace('bg-surfaceHover', 'bg-green-500/20');
+                // Animasi Icon Button
+                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                copyBtn.classList.replace('text-gray-400', 'text-green-400');
+                copyBtn.classList.replace('group-hover:text-primary', 'group-hover:text-green-400');
                 
-                // Haptic Feedback Telegram
+                // Munculkan Toast Notification
+                toast.classList.add('show');
+                
+                // Haptic Success
                 if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
 
-                // Kembalikan ke ikon copy setelah 2 detik
+                // Kembalikan ke normal setelah 2.5 detik
                 setTimeout(() => {
-                    copyBtn.innerHTML = '<i class="fas fa-copy text-sm"></i>';
-                    copyBtn.classList.remove('copy-success');
-                    copyBtn.classList.replace('bg-green-500/20', 'bg-surfaceHover');
-                }, 2000);
+                    copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                    copyBtn.classList.replace('text-green-400', 'text-gray-400');
+                    copyBtn.classList.replace('group-hover:text-green-400', 'group-hover:text-primary');
+                    toast.classList.remove('show');
+                }, 2500);
             }).catch(err => {
-                console.error('Gagal menyalin text: ', err);
+                if(tg.showAlert) tg.showAlert("Gagal menyalin ID.");
             });
         }
 
-        // Fungsi Modal
+        // Fungsi Modals
         function openModal(modalId) {
+            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
             const modal = document.getElementById(modalId);
             modal.classList.add('show');
-            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
         function closeModal(modalId) {
@@ -351,15 +457,18 @@
             modal.classList.remove('show');
         }
 
-        // Fungsi Tutup WebApp
+        // Fungsi Tutup WebApp dengan mulus
         function closeWebApp() {
-            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('rigid');
             tg.close();
         }
 
-        // Jalankan fungsi saat halaman siap
+        // Jalankan saat dokumen dimuat
         window.onload = () => {
             setupUserData();
+            
+            // Beri tahu Telegram bahwa aplikasi sudah siap dirender sepenuhnya
+            tg.ready();
         };
     </script>
 </body>
