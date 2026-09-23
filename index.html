@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mellstecuu Digital ID</title>
+    <title>Dashboard Mellstecuu</title>
     
     <!-- Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -21,23 +21,34 @@
                 extend: {
                     fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
                     colors: {
-                        bgDeep: '#020203',
-                        primary: '#6366f1', // Indigo
-                        secondary: '#d946ef', // Fuchsia
+                        darkBg: '#080c16',
+                        glassBg: 'rgba(255, 255, 255, 0.03)',
+                        glassBorder: 'rgba(255, 255, 255, 0.08)',
                     },
                     animation: {
-                        'spin-slow': 'spin 8s linear infinite',
-                        'pulse-glow': 'pulseGlow 4s ease-in-out infinite alternate',
-                        'slide-up': 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'blob': 'blob 12s infinite alternate',
+                        'slide-up-fade': 'slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 3s infinite alternate',
                     },
                     keyframes: {
-                        pulseGlow: {
-                            '0%': { opacity: 0.3, transform: 'scale(1)' },
-                            '100%': { opacity: 0.6, transform: 'scale(1.1)' },
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(40px, -60px) scale(1.1)' },
+                            '66%': { transform: 'translate(-30px, 30px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
                         },
-                        slideUp: {
-                            '0%': { opacity: 0, transform: 'translateY(20px)' },
+                        slideUpFade: {
+                            '0%': { opacity: 0, transform: 'translateY(40px)' },
                             '100%': { opacity: 1, transform: 'translateY(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-12px)' },
+                        },
+                        pulseGlow: {
+                            '0%': { boxShadow: '0 0 20px rgba(56, 189, 248, 0.2)' },
+                            '100%': { boxShadow: '0 0 40px rgba(168, 85, 247, 0.4)' },
                         }
                     }
                 }
@@ -47,203 +58,218 @@
     
     <style>
         body {
-            background-color: #020203;
-            color: #fafafa;
+            background-color: #080c16;
+            color: #e2e8f0;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
             overflow-x: hidden;
         }
 
-        /* Ambient Backgrounds */
-        .ambient-light-1 {
-            position: fixed; top: -10%; left: -20%; width: 70vw; height: 70vw;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(0,0,0,0) 70%);
-            z-index: -1;
-        }
-        .ambient-light-2 {
-            position: fixed; bottom: -10%; right: -20%; width: 60vw; height: 60vw;
-            background: radial-gradient(circle, rgba(217, 70, 239, 0.12) 0%, rgba(0,0,0,0) 70%);
-            z-index: -1;
-        }
-
-        /* Sleek UI Elements */
-        .sleek-border {
+        /* Seamless Dark Glassmorphism */
+        .glass-panel {
+            background: rgba(20, 25, 40, 0.4);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
         }
 
-        /* Avatar Ring */
-        .avatar-gradient-ring {
-            background: conic-gradient(from 0deg, #6366f1, #d946ef, #0ea5e9, #6366f1);
+        .glass-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
         }
+        .glass-item:active { background: rgba(255, 255, 255, 0.08); transform: scale(0.96); }
 
-        /* Modals & Toast */
-        .modal { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); opacity: 0; visibility: hidden; backdrop-filter: blur(0px); }
-        .modal.show { opacity: 1; visibility: visible; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-        .modal-content { transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-        .modal.show .modal-content { transform: translateY(0); }
+        /* Animated Dark Aurora Orbs */
+        .orb-1 { position: fixed; top: -10%; left: -20%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, rgba(0,0,0,0) 70%); border-radius: 50%; z-index: -1; filter: blur(60px); }
+        .orb-2 { position: fixed; top: 30%; right: -20%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, rgba(0,0,0,0) 70%); border-radius: 50%; z-index: -1; filter: blur(60px); }
+        .orb-3 { position: fixed; bottom: -10%; left: 10%; width: 350px; height: 350px; background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, rgba(0,0,0,0) 70%); border-radius: 50%; z-index: -1; filter: blur(50px); }
+
+        /* Dark Bottom Sheet Modal */
+        .bottom-sheet { transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1); transform: translateY(100%); }
+        .modal-overlay { opacity: 0; visibility: hidden; transition: all 0.3s ease; backdrop-filter: blur(0px); background: rgba(0,0,0,0); }
+        .modal-overlay.show { opacity: 1; visibility: visible; backdrop-filter: blur(8px); background: rgba(0,0,0,0.6); }
+        .modal-overlay.show .bottom-sheet { transform: translateY(0); }
         
+        /* Toast Notification */
         #toast {
-            position: fixed; top: -50px; left: 50%; transform: translateX(-50%);
-            opacity: 0; visibility: hidden; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 999;
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            opacity: 0; transition: all 0.5s cubic-bezier(0.32, 0.72, 0, 1); z-index: 999;
         }
-        #toast.show { top: 20px; opacity: 1; visibility: visible; }
+        #toast.show { top: 24px; opacity: 1; }
 
+        /* Hide Scrollbar */
         ::-webkit-scrollbar { display: none; }
     </style>
 </head>
 
-<body class="min-h-screen flex flex-col items-center justify-start pb-12 font-sans antialiased relative w-full">
+<body class="min-h-screen flex flex-col items-center justify-start py-10 px-6 font-sans antialiased relative w-full">
 
-    <div class="ambient-light-1 animate-pulse-glow"></div>
-    <div class="ambient-light-2 animate-pulse-glow" style="animation-delay: 2s;"></div>
+    <!-- Ambient Dark Aurora Background -->
+    <div class="orb-1 animate-blob"></div>
+    <div class="orb-2 animate-blob" style="animation-delay: 2s;"></div>
+    <div class="orb-3 animate-blob" style="animation-delay: 4s;"></div>
 
-    <div id="toast" class="px-5 py-3 rounded-full flex items-center gap-3 bg-[#111115] border border-white/10 shadow-2xl backdrop-blur-md">
-        <i class="fas fa-check-circle text-green-400"></i>
-        <span class="text-sm font-semibold text-white tracking-wide">ID Tersalin</span>
+    <!-- Toast Component -->
+    <div id="toast" class="px-5 py-2.5 rounded-full flex items-center gap-2.5 bg-slate-800/90 backdrop-blur-md border border-slate-700 shadow-2xl shadow-cyan-500/10">
+        <div class="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
+            <i class="fas fa-check text-emerald-400 text-xs"></i>
+        </div>
+        <span class="text-xs font-bold text-slate-200 tracking-wide">ID Berhasil Disalin!</span>
     </div>
 
-    <div class="w-full pt-8 pb-4 text-center animate-slide-up" style="animation-delay: 0.1s;">
-        <h1 class="text-[10px] font-bold text-gray-500 tracking-[0.4em] uppercase">Mellstecuu</h1>
-    </div>
-
-    <div class="w-full flex flex-col items-center mt-4 animate-slide-up" style="animation-delay: 0.2s;">
+    <div class="w-full flex flex-col items-center animate-slide-up-fade relative z-10">
         
-        <!-- Avatar -->
-        <div class="relative w-32 h-32 flex items-center justify-center">
-            <!-- Spinning Ring -->
-            <div class="absolute inset-0 rounded-full avatar-gradient-ring animate-spin-slow opacity-80 blur-[2px]"></div>
-            <div class="absolute inset-[2px] bg-bgDeep rounded-full z-0"></div>
+        <!-- Seamless Avatar -->
+        <div class="relative animate-float cursor-default">
+            <!-- Neon Glow Ring -->
+            <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-cyan-500 to-purple-600 blur-xl opacity-40 animate-pulse-glow"></div>
             
-            <!-- Image Container -->
-            <div class="absolute inset-[4px] rounded-full overflow-hidden bg-[#111115] z-10 flex items-center justify-center shadow-2xl border border-white/5">
-                <div id="avatar-fallback" class="w-full h-full flex items-center justify-center text-4xl font-bold text-white/50 bg-gradient-to-br from-white/5 to-transparent">
-                    <i class="fas fa-user"></i>
+            <!-- Avatar Frame -->
+            <div class="relative w-28 h-28 bg-slate-900/80 backdrop-blur-sm rounded-full shadow-2xl shadow-black/50 border border-white/10 flex items-center justify-center overflow-hidden z-10">
+                <div id="avatar-fallback" class="text-4xl font-extrabold text-slate-500 flex flex-col items-center gap-1">
+                    <i class="fas fa-spinner fa-spin text-xl mb-1"></i>
                 </div>
-                <div id="avatar-container" class="absolute inset-0 flex items-center justify-center"></div>
+                <img id="avatar-img" src="" alt="Profile" class="w-full h-full object-cover hidden">
             </div>
 
-            <!-- Premium Badge -->
-            <div id="premium-badge" class="hidden absolute bottom-0 right-2 z-20 w-8 h-8 rounded-full bg-gradient-to-tr from-violet-500 to-fuchsia-500 flex items-center justify-center shadow-[0_0_15px_rgba(217,70,239,0.5)] border-2 border-bgDeep" title="Telegram Premium">
-                <i class="fas fa-star text-white text-xs"></i>
+            <!-- Premium Badge (Dark Mode Version) -->
+            <div id="premium-badge" class="hidden absolute bottom-0 right-0 z-20 w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/30 border border-white/20" title="Telegram Premium">
+                <i class="fas fa-star text-white text-[10px]"></i>
             </div>
         </div>
 
-        <!-- Typography Info -->
-        <div class="mt-6 text-center px-4 w-full max-w-sm">
-            <h2 id="user-name" class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 tracking-tight truncate leading-tight">Memuat...</h2>
-            <p id="user-username" class="text-sm font-medium text-gray-500 tracking-wide mt-1">@menghubungkan</p>
+        <!-- User Info (Text Only, Seamless) -->
+        <div class="mt-5 text-center flex flex-col items-center">
+            <h2 id="user-name" class="text-2xl font-extrabold text-white tracking-tight leading-tight drop-shadow-md">Memuat Data...</h2>
+            <p id="user-username" class="text-sm font-medium text-slate-400 tracking-wide mt-1">@tunggu_sebentar</p>
             
-            <!-- Badges Text Only (Minimalist) -->
-            <div class="flex items-center justify-center gap-4 mt-3">
-                <div class="flex items-center gap-1.5 text-gray-400">
-                    <i class="fas fa-mobile-alt text-[10px]"></i>
-                    <span id="tg-platform-badge" class="text-[11px] font-semibold uppercase tracking-wider">OS</span>
-                </div>
-                <div class="w-1 h-1 rounded-full bg-gray-600"></div>
-                <div class="flex items-center gap-1.5 text-gray-400">
-                    <i class="fas fa-globe text-[10px]"></i>
-                    <span id="tg-lang-badge" class="text-[11px] font-semibold uppercase tracking-wider">ID</span>
-                </div>
+            <!-- Tech Badges -->
+            <div class="flex items-center justify-center gap-2 mt-3">
+                <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[9px] font-bold uppercase tracking-widest text-slate-300 backdrop-blur-sm flex items-center gap-1.5">
+                    <i class="fas fa-microchip text-cyan-400"></i> <span id="tg-platform-badge">SYSTEM</span>
+                </span>
+                <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[9px] font-bold uppercase tracking-widest text-slate-300 backdrop-blur-sm flex items-center gap-1.5">
+                    <i class="fas fa-globe-asia text-purple-400"></i> <span id="tg-lang-badge">ID</span>
+                </span>
             </div>
         </div>
     </div>
 
-    <div class="w-full max-w-[280px] mt-8 animate-slide-up" style="animation-delay: 0.3s;">
-        <div onclick="copyId()" class="sleek-border rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:bg-white/[0.02] transition-colors active:scale-[0.98] group">
-            <div>
-                <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-1">Telegram UID</p>
-                <p id="user-id" class="font-mono text-lg font-bold text-gray-200 tracking-wider">----------</p>
-            </div>
-            <div id="copy-btn" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 group-hover:text-white transition-colors">
-                <i class="fas fa-copy"></i>
-            </div>
-        </div>
-    </div>
-
-    <div class="w-full max-w-sm mt-10 px-5 space-y-3 animate-slide-up" style="animation-delay: 0.4s;">
+    <div class="w-full max-w-[340px] mt-8 animate-slide-up-fade relative z-10" style="animation-delay: 0.1s;">
         
-        <button onclick="openModal('modal-tutorial')" class="w-full flex items-center justify-between p-4 rounded-2xl sleek-border hover:bg-white/[0.02] transition-all active:scale-[0.98]">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary"><i class="fas fa-shopping-cart text-sm"></i></div>
-                <span class="font-semibold text-sm text-gray-200 tracking-wide">Cara Pemesanan</span>
+        <!-- Smart UID Copier (Pill Design) -->
+        <div class="w-full glass-panel rounded-full p-2 pl-5 mb-5 flex items-center justify-between cursor-pointer group active:scale-[0.98] transition-transform" onclick="copyId()">
+            <div class="flex flex-col justify-center">
+                <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-0.5">TELEGRAM ID</span>
+                <span id="user-id" class="font-mono text-sm font-bold text-slate-200 tracking-wider">----------</span>
             </div>
-            <i class="fas fa-chevron-right text-gray-600 text-xs"></i>
-        </button>
+            <div id="copy-btn" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 group-hover:bg-cyan-500/20 group-hover:text-cyan-400 transition-all border border-white/5">
+                <i class="fas fa-clone"></i>
+            </div>
+        </div>
 
-        <button onclick="openModal('modal-snk')" class="w-full flex items-center justify-between p-4 rounded-2xl sleek-border hover:bg-white/[0.02] transition-all active:scale-[0.98]">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary"><i class="fas fa-shield-alt text-sm"></i></div>
-                <span class="font-semibold text-sm text-gray-200 tracking-wide">Syarat & Ketentuan</span>
+        <!-- Dashboard Grid (2x2) -->
+        <div class="grid grid-cols-2 gap-4">
+            
+            <!-- Item 1: Cara Order -->
+            <div onclick="openModal('modal-tutorial')" class="glass-item rounded-3xl p-5 flex flex-col items-center justify-center gap-3 cursor-pointer">
+                <div class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]">
+                    <i class="fas fa-shopping-cart text-lg"></i>
+                </div>
+                <span class="text-xs font-bold text-slate-300 text-center tracking-wide">Cara<br>Order</span>
             </div>
-            <i class="fas fa-chevron-right text-gray-600 text-xs"></i>
-        </button>
 
-        <!-- UBAH USERNAME ADMIN DI BAWAH INI -->
-        <a href="https://t.me/username_admin_anda" target="_blank" class="w-full flex items-center justify-between p-4 rounded-2xl sleek-border hover:bg-white/[0.02] transition-all active:scale-[0.98]">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400"><i class="fas fa-headset text-sm"></i></div>
-                <span class="font-semibold text-sm text-gray-200 tracking-wide">Hubungi Admin CS</span>
+            <!-- Item 2: S&K -->
+            <div onclick="openModal('modal-snk')" class="glass-item rounded-3xl p-5 flex flex-col items-center justify-center gap-3 cursor-pointer">
+                <div class="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-400 border border-purple-500/20 shadow-[0_0_15px_rgba(168,85,247,0.15)]">
+                    <i class="fas fa-file-contract text-lg"></i>
+                </div>
+                <span class="text-xs font-bold text-slate-300 text-center tracking-wide">Syarat &<br>Ketentuan</span>
             </div>
-            <i class="fas fa-external-link-alt text-gray-600 text-xs"></i>
-        </a>
 
-        <!-- UBAH USERNAME CHANNEL DI BAWAH INI -->
-        <a href="https://t.me/username_channel_anda" target="_blank" class="w-full flex items-center justify-between p-4 rounded-2xl sleek-border hover:bg-white/[0.02] transition-all active:scale-[0.98]">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-full bg-gray-500/10 flex items-center justify-center text-gray-300"><i class="fas fa-bullhorn text-sm"></i></div>
-                <span class="font-semibold text-sm text-gray-200 tracking-wide">Info & Update Channel</span>
-            </div>
-            <i class="fas fa-external-link-alt text-gray-600 text-xs"></i>
-        </a>
+            <!-- Item 3: Admin -->
+            <a href="https://t.me/mellstecuu" target="_blank" class="glass-item rounded-3xl p-5 flex flex-col items-center justify-center gap-3 cursor-pointer">
+                <div class="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
+                    <i class="fas fa-headset text-lg"></i>
+                </div>
+                <span class="text-xs font-bold text-slate-300 text-center tracking-wide">Hubungi<br>Admin</span>
+            </a>
+
+            <!-- Item 4: Channel -->
+            <a href="https://t.me/channel_anda" target="_blank" class="glass-item rounded-3xl p-5 flex flex-col items-center justify-center gap-3 cursor-pointer">
+                <div class="w-12 h-12 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-400 border border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.15)]">
+                    <i class="fas fa-satellite-dish text-lg"></i>
+                </div>
+                <span class="text-xs font-bold text-slate-300 text-center tracking-wide">Info &<br>Update</span>
+            </a>
+            
+        </div>
     </div>
 
-    <div class="w-full max-w-sm px-5 mt-8 animate-slide-up" style="animation-delay: 0.5s;">
-        <button onclick="closeWebApp()" class="w-full py-4 text-center text-[11px] font-bold text-gray-500 hover:text-gray-300 uppercase tracking-[0.2em] transition-colors">
-            Tutup Aplikasi
+    <div class="w-full max-w-[340px] mt-8 mb-4 animate-slide-up-fade relative z-10" style="animation-delay: 0.2s;">
+        <button onclick="closeWebApp()" class="w-full py-4 text-center text-[10px] font-bold text-slate-500 hover:text-slate-300 uppercase tracking-[0.3em] transition-colors active:scale-95">
+            <i class="fas fa-power-off mr-2 opacity-50"></i> Tutup Aplikasi
         </button>
     </div>
 
     <!-- Modal Tutorial -->
-    <div id="modal-tutorial" class="modal fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60">
-        <div class="modal-content w-full max-w-md bg-[#0a0a0c] border-t sm:border border-white/10 rounded-t-[2rem] sm:rounded-3xl p-6 pb-10 sm:pb-6 relative shadow-2xl">
-            <div class="w-12 h-1 bg-white/10 rounded-full mx-auto mb-6 sm:hidden"></div>
+    <div id="modal-tutorial" class="modal-overlay fixed inset-0 z-[100] flex items-end justify-center">
+        <div class="bottom-sheet w-full max-w-md bg-[#0f172a] rounded-t-[2rem] p-8 pb-10 border-t border-white/10 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] relative">
+            <div class="w-12 h-1 bg-slate-700 rounded-full mx-auto mb-8"></div>
             
-            <h3 class="text-xl font-bold text-white mb-6">Cara Pemesanan</h3>
+            <h3 class="text-xl font-extrabold text-white mb-6 flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+                    <i class="fas fa-shopping-cart text-sm"></i>
+                </div>
+                Panduan Pemesanan
+            </h3>
             
             <div class="space-y-4">
-                <div class="flex gap-4">
-                    <div class="mt-1 w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-xs text-gray-400 shrink-0">1</div>
-                    <p class="text-sm text-gray-300 leading-relaxed">Tutup layar ini, lalu kembali ke Chat Bot utama.</p>
+                <div class="flex gap-4 items-start bg-slate-800/50 p-4 rounded-2xl border border-white/5">
+                    <div class="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-300 shrink-0">1</div>
+                    <p class="text-sm text-slate-300 font-medium leading-relaxed">Tutup layar Mini App ini, lalu kembali ke layar chat Bot Utama.</p>
                 </div>
-                <div class="flex gap-4">
-                    <div class="mt-1 w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-xs text-gray-400 shrink-0">2</div>
-                    <p class="text-sm text-gray-300 leading-relaxed">Ketik <b>/start</b> lalu klik tombol <b>🛒 Lihat Produk Tersedia</b>.</p>
+                <div class="flex gap-4 items-start bg-slate-800/50 p-4 rounded-2xl border border-white/5">
+                    <div class="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-300 shrink-0">2</div>
+                    <p class="text-sm text-slate-300 font-medium leading-relaxed">Ketik perintah <span class="bg-blue-500/20 text-blue-400 font-bold px-2 py-0.5 rounded text-xs">/start</span> lalu pilih menu <b class="text-white">Lihat Produk</b>.</p>
                 </div>
-                <div class="flex gap-4">
-                    <div class="mt-1 w-6 h-6 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-xs text-primary shrink-0">3</div>
-                    <p class="text-sm text-gray-300 leading-relaxed">Pilih produk, lakukan pembayaran via QRIS atau Saldo. Produk akan otomatis dikirim ke chat.</p>
+                <div class="flex gap-4 items-start bg-blue-500/10 p-4 rounded-2xl border border-blue-500/20">
+                    <div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-xs font-bold text-white shrink-0">3</div>
+                    <p class="text-sm text-slate-200 font-medium leading-relaxed">Pilih produk, lakukan pembayaran, dan pesanan otomatis dikirim oleh bot.</p>
                 </div>
             </div>
             
-            <button onclick="closeModal('modal-tutorial')" class="w-full mt-8 bg-white text-black font-bold py-3.5 rounded-xl hover:bg-gray-200 transition active:scale-95">Mengerti</button>
+            <button onclick="closeModal('modal-tutorial')" class="w-full mt-6 bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-500 transition-all active:scale-95 shadow-lg shadow-blue-900/50">Siapp, Mengerti!</button>
         </div>
     </div>
 
     <!-- Modal SNK -->
-    <div id="modal-snk" class="modal fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60">
-        <div class="modal-content w-full max-w-md bg-[#0a0a0c] border-t sm:border border-white/10 rounded-t-[2rem] sm:rounded-3xl p-6 pb-10 sm:pb-6 relative shadow-2xl">
-            <div class="w-12 h-1 bg-white/10 rounded-full mx-auto mb-6 sm:hidden"></div>
+    <div id="modal-snk" class="modal-overlay fixed inset-0 z-[100] flex items-end justify-center">
+        <div class="bottom-sheet w-full max-w-md bg-[#0f172a] rounded-t-[2rem] p-8 pb-10 border-t border-white/10 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] relative">
+            <div class="w-12 h-1 bg-slate-700 rounded-full mx-auto mb-8"></div>
             
-            <h3 class="text-xl font-bold text-white mb-6">Syarat & Ketentuan</h3>
+            <h3 class="text-xl font-extrabold text-white mb-6 flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400">
+                    <i class="fas fa-file-contract text-sm"></i>
+                </div>
+                Syarat & Ketentuan
+            </h3>
             
-            <ul class="text-sm text-gray-300 space-y-4">
-                <li class="flex items-start gap-3"><i class="fas fa-check text-secondary mt-1 text-xs"></i> <span>Transaksi yang masuk tidak dapat dibatalkan sepihak.</span></li>
-                <li class="flex items-start gap-3"><i class="fas fa-check text-secondary mt-1 text-xs"></i> <span>Barang berupa aset digital. Tidak ada refund jika produk terbukti valid.</span></li>
-                <li class="flex items-start gap-3"><i class="fas fa-check text-secondary mt-1 text-xs"></i> <span>Simpan ID Order & UID Anda sebagai bukti sah untuk klaim garansi.</span></li>
+            <ul class="text-sm text-slate-300 font-medium space-y-3">
+                <li class="flex items-start gap-3 bg-slate-800/50 p-4 rounded-2xl border border-white/5">
+                    <i class="fas fa-shield-check text-purple-400 mt-1"></i> <span>Transaksi yang masuk ke sistem tidak dapat dibatalkan secara sepihak.</span>
+                </li>
+                <li class="flex items-start gap-3 bg-slate-800/50 p-4 rounded-2xl border border-white/5">
+                    <i class="fas fa-shield-check text-purple-400 mt-1"></i> <span>Produk digital tidak dapat di-refund jika terbukti pesanan valid.</span>
+                </li>
+                <li class="flex items-start gap-3 bg-slate-800/50 p-4 rounded-2xl border border-white/5">
+                    <i class="fas fa-shield-check text-purple-400 mt-1"></i> <span>Wajib menyimpan ID Order dan UID Anda sebagai bukti sah untuk klaim.</span>
+                </li>
             </ul>
             
-            <button onclick="closeModal('modal-snk')" class="w-full mt-8 bg-white/10 border border-white/10 text-white font-bold py-3.5 rounded-xl hover:bg-white/20 transition active:scale-95">Tutup</button>
+            <button onclick="closeModal('modal-snk')" class="w-full mt-6 bg-slate-800 text-slate-200 font-bold py-3.5 rounded-xl hover:bg-slate-700 transition-all border border-white/10 active:scale-95">Tutup</button>
         </div>
     </div>
 
@@ -251,110 +277,117 @@
         const tg = window.Telegram ? window.Telegram.WebApp : null;
         let currentUserId = "0000000000";
 
-        // Setup UI Telegram
+        // Setup Telegram UI & Warna Tema
         if (tg) {
             tg.expand();
-            tg.setHeaderColor('#020203');
-            tg.setBackgroundColor('#020203');
+            try {
+                // Menyamakan warna header Telegram dengan background gelap
+                tg.setHeaderColor('#080c16');
+                tg.setBackgroundColor('#080c16');
+            } catch(e){}
         }
 
-        // Fungsi Load Data User 
+        // Logic Tarik Data Telegram SDK (Anti-Gagal)
         function setupUserData() {
             try {
                 let user = (tg && tg.initDataUnsafe) ? tg.initDataUnsafe.user : null;
 
                 if (user) {
+                    // Eksekusi jika dibuka via Aplikasi Telegram
                     currentUserId = user.id ? user.id.toString() : "0000000000";
                     document.getElementById('user-id').innerText = currentUserId;
 
-                    const firstName = user.first_name || "Pengguna";
+                    const firstName = user.first_name || "Pembeli";
                     const lastName = user.last_name || "";
                     document.getElementById('user-name').innerText = (firstName + " " + lastName).trim();
 
                     if (user.username) {
                         document.getElementById('user-username').innerText = "@" + user.username;
                     } else {
-                        document.getElementById('user-username').innerText = "Tanpa Username";
+                        document.getElementById('user-username').innerText = "Privat Account";
                     }
 
-                    // Foto Profil dengan Fallback
-                    const initialChar = firstName.charAt(0).toUpperCase();
+                    // Tampilkan Profil Asli jika ada
+                    const avatarImg = document.getElementById('avatar-img');
                     const avatarFallback = document.getElementById('avatar-fallback');
-                    const avatarContainer = document.getElementById('avatar-container');
                     
-                    avatarFallback.innerHTML = initialChar; 
-
                     if (user.photo_url) {
-                        const img = document.createElement('img');
-                        img.src = user.photo_url;
-                        img.className = 'w-full h-full object-cover';
-                        img.onerror = function() {
-                            this.style.display = 'none';
-                            avatarFallback.style.display = 'flex';
+                        avatarImg.src = user.photo_url;
+                        avatarImg.classList.remove('hidden');
+                        avatarFallback.classList.add('hidden');
+                        
+                        // Fallback jika foto gagal dimuat (broken link)
+                        avatarImg.onerror = function() {
+                            avatarImg.classList.add('hidden');
+                            avatarFallback.classList.remove('hidden');
+                            avatarFallback.innerHTML = `<span class="text-3xl">${firstName.charAt(0).toUpperCase()}</span>`;
                         };
-                        avatarContainer.appendChild(img);
-                        avatarFallback.style.display = 'none'; 
                     } else {
-                        avatarFallback.style.display = 'flex';
+                        // Jika foto disembunyikan/tidak ada, tampilkan Inisial
+                        avatarFallback.innerHTML = `<span class="text-3xl">${firstName.charAt(0).toUpperCase()}</span>`;
                     }
 
-                    // Badge Premium
+                    // Deteksi Premium
                     if (user.is_premium) document.getElementById('premium-badge').classList.remove('hidden');
 
-                    // OS Platform
+                    // Deteksi Platform (OS)
                     const pBadge = document.getElementById('tg-platform-badge');
                     if (tg && tg.platform) {
                         const p = tg.platform.toLowerCase();
-                        if (p === 'ios') pBadge.innerText = 'iOS';
-                        else if (p === 'android') pBadge.innerText = 'Android';
-                        else if (p === 'tdesktop' || p === 'web') pBadge.innerText = 'Desktop';
+                        if (p === 'ios') pBadge.innerText = 'APPLE';
+                        else if (p === 'android') pBadge.innerText = 'ANDROID';
+                        else if (p === 'tdesktop' || p === 'web') pBadge.innerText = 'DESKTOP';
                         else pBadge.innerText = p.toUpperCase();
                     }
 
-                    // Bahasa
+                    // Deteksi Bahasa
                     if (user.language_code) {
                         document.getElementById('tg-lang-badge').innerText = user.language_code.toUpperCase();
                     }
 
                 } else {
-                    // Fallback Web Browser biasa
-                    document.getElementById('user-name').innerText = "Mode Pengunjung";
-                    document.getElementById('user-username').innerText = "Buka dari Aplikasi Telegram";
-                    document.getElementById('user-id').innerText = "1234567890";
-                    document.getElementById('avatar-fallback').innerHTML = '<i class="fas fa-fingerprint"></i>';
+                    // Fallback jika dibuka di browser biasa (Chrome/Safari)
+                    document.getElementById('user-name').innerText = "Mode Browser";
+                    document.getElementById('user-username').innerText = "Buka via Aplikasi Telegram";
+                    document.getElementById('user-id').innerText = "TIDAK-TERDETEKSI";
+                    document.getElementById('avatar-fallback').innerHTML = '<i class="fas fa-fingerprint text-slate-600"></i>';
                 }
             } catch (err) {
-                console.error("Gagal load data", err);
-                document.getElementById('user-name').innerText = "Kesalahan Sistem";
-                document.getElementById('user-id').innerText = "ERROR";
+                console.error("Gagal membaca profil", err);
+                document.getElementById('user-name').innerText = "Gagal Memuat Profil";
+                document.getElementById('user-id').innerText = "ERROR-SDK";
+                document.getElementById('avatar-fallback').innerHTML = '<i class="fas fa-exclamation-triangle text-rose-500 text-2xl"></i>';
             }
         }
 
-        // Copy Fungsi Super Aman (Cross-platform)
+        // Logic Copy ID (Robust & Tahan Banting di semua HP)
         function copyId() {
-            if (currentUserId === "0000000000" || currentUserId === "1234567890" || currentUserId === "ERROR") return;
+            if (currentUserId === "0000000000" || currentUserId === "TIDAK-TERDETEKSI" || currentUserId === "ERROR-SDK") return;
             
+            // Getaran Haptic
             if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
 
             const btn = document.getElementById('copy-btn');
             const toast = document.getElementById('toast');
             
-            btn.innerHTML = '<i class="fas fa-check text-white"></i>';
-            btn.classList.add('bg-green-500');
+            // Efek UI berhasil disalin
+            btn.innerHTML = '<i class="fas fa-check"></i>';
+            btn.classList.replace('text-slate-400', 'text-cyan-400');
+            btn.classList.add('bg-cyan-500/20');
             toast.classList.add('show');
             
             setTimeout(() => {
-                btn.innerHTML = '<i class="fas fa-copy"></i>';
-                btn.classList.remove('bg-green-500');
+                btn.innerHTML = '<i class="fas fa-clone"></i>';
+                btn.classList.replace('text-cyan-400', 'text-slate-400');
+                btn.classList.remove('bg-cyan-500/20');
                 toast.classList.remove('show');
-            }, 2000);
+            }, 2500);
 
+            // Eksekusi copy (Metode lawas namun sangat aman dari pemblokiran iframe)
             var textArea = document.createElement("textarea");
             textArea.value = currentUserId;
-            textArea.style.position = "fixed";
-            textArea.style.top = "0";
-            textArea.style.left = "0";
-            textArea.style.opacity = "0";
+            textArea.style.position = "fixed"; 
+            textArea.style.top = "-9999px"; // Sembunyikan sejauh mungkin
             document.body.appendChild(textArea);
             textArea.focus();
             textArea.select();
@@ -362,10 +395,13 @@
             try {
                 document.execCommand('copy');
                 if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            } catch (err) {}
+            } catch (err) {
+                console.error("Gagal menyalin", err);
+            }
             document.body.removeChild(textArea);
         }
 
+        // Modal Interaksi
         function openModal(id) {
             if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
             document.getElementById(id).classList.add('show');
@@ -375,17 +411,18 @@
             document.getElementById(id).classList.remove('show');
         }
 
+        // Interaksi Keluar (Tutup Web App)
         function closeWebApp() {
             if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
             if (tg) tg.close();
         }
 
-        // Inisialisasi
+        // Memicu Script saat Web selesai dimuat (Dengan sedikit jeda agar SDK siap)
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 setupUserData();
                 if (tg) tg.ready();
-            }, 100);
+            }, 300); // 300ms delay agar Telegram memberikan data aslinya
         });
     </script>
 </body>
